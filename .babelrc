@@ -1,0 +1,11 @@
+{
+  "presets": [ "es20153", "es2016", "es2017", "stage-0"],
+  "plugins": [[
+    "transform-runtime", {
+      "helpers": false,
+      "polyfill": false,
+      "regenerator": true
+    }],
+    "transform-object-assign"
+  ]
+}
