@@ -8,6 +8,10 @@
     "build-analyser": "export PROCESS_ANALYSER=true ; webpack --mode development",
     "build-prod": "export NODE_ENV=\"production\"; webpack  --mode production",
     "build-prod-analyser": "export NODE_ENV=\"production\"; export PROCESS_ANALYSER=true; webpack  --mode production",
+    "cip": "gulp build",
+    "cid": "gulp build-dev",
+    "ciap": "gulp build-analyse",
+    "ciad": "gulp build-analyse-dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Laurent Mignonat",
@@ -28,6 +32,9 @@
     "babel-runtime": "^6.26.0",
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.11",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.4.0",
+    "gulp-sync": "^0.1.4",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.7",
     "ts-loader": "^4.0.1",
@@ -37,6 +44,7 @@
     "vue-template-compiler": "^2.5.16",
     "webpack": "^4.1.1",
     "webpack-bundle-analyzer": "^2.11.1",
-    "webpack-cli": "^2.0.12"
+    "webpack-cli": "^2.0.12",
+    "webpack-stream": "^4.0.2"
   }
 }
