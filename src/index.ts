@@ -1,16 +1,21 @@
 import Vue from "vue"
-import HelloComponent from "components/Hello.vue"
+import App from "components/App.vue"
+import appStore from "./store/store"
+import { AppViewMode, AppUserRight } from './components/app-types'
 
-let v = new Vue({
+appStore.dispatch("")
+
+new Vue({
     el: "#app",
-    template: `
-        <div>
-            Name: <input v-model="name" type="text">
-            <hello-component :name="name" :initialEnthusiasm="5" />
-        </div>
-    `,
-    data: { name: "World" },
+    template: `<app :options="appOptions"></app>`,
+    data: () => { return {
+        appOptions: {
+            viewMode: AppViewMode.FULL,
+            userRights: [ AppUserRight.ADMIN ]
+        }
+    }},
+    store: appStore,
     components: {
-        HelloComponent
+        App
     }
-});
+})

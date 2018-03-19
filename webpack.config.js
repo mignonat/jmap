@@ -14,8 +14,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: 'dist/',
-    filename: 'build.js',
-    chunkFilename: '[name].[ext]?[hash]'
+    filename: 'app.js',
+    chunkFilename: '[name].js'
   },
   module: {
     rules: [{
@@ -45,6 +45,12 @@ module.exports = {
       test : /\.js$/,
       loader: 'babel-loader',
       include: [ path.resolve(currentDir, 'src') ]
+    },{
+      test: /\.css$/,
+      loader: 'style-loader'
+    },{
+      test: /\.css$/,
+      loader: 'css-loader'
     }]
   },
   resolve: {
@@ -60,6 +66,18 @@ module.exports = {
   },
   performance: {
     hints: false
+  },
+  optimization : {
+    splitChunks: {
+      cacheGroups: {
+       vendor: {
+        test: /node_modules/,
+        chunks: 'initial',
+        name: 'vendor',
+        enforce: true
+       },
+      }
+     }
   }
 }
 
@@ -73,7 +91,7 @@ if (process.env.NODE_ENV === 'production') {
     'vuex': 'vuex/dist/vuex.min.js',
     'vuetify-css': 'vuetify/dist/vuetify.min.css'
   }
-  module.exports.optimization = {
+  Object.assign(module.exports.optimization, {
     minimize: true,
     minimizer: [
       new UglifyJsPlugin({
@@ -91,12 +109,12 @@ if (process.env.NODE_ENV === 'production') {
         }
       })
     ]
-  }
+  })
 } else {
   // development environment
   console.log('Webpack will run in development mode')
   module.exports.mode = 'development'
-  module.exports.devtool = '#eval-source-map'
+  module.exports.devtool = 'eval'
   module.exports.resolve.alias = {
     'vue': 'vue/dist/vue.esm.js',
     'vuex': 'vuex/dist/vuex.esm.js',

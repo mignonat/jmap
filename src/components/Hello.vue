@@ -13,7 +13,7 @@
 
     export default Vue.extend({
         props: {
-            name: { 
+            name: {
                 type: String,
                 default: 'World'
             },
