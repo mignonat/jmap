@@ -1,19 +1,21 @@
 import Vue from "vue"
 import App from "components/App.vue"
-import appStore from "./store/store"
-import { AppViewMode, AppUserRight } from './components/app-types'
+import appStore from "store/store"
+import { AppViewMode, UserRight } from "model/app"
 
-appStore.dispatch("")
+appStore.dispatch("APP_INITIALIZE", {
+    // this options are dynamic and should/will be inserted by a jsp that call the app
+    viewMode: AppViewMode.FULL,
+    userRights: [ UserRight.ADMIN, UserRight.VIEW ]
+})
 
-new Vue({
+interface Window {
+    App: Vue
+}
+
+(<any>window).App = new Vue({
     el: "#app",
-    template: `<app :options="appOptions"></app>`,
-    data: () => { return {
-        appOptions: {
-            viewMode: AppViewMode.FULL,
-            userRights: [ AppUserRight.ADMIN ]
-        }
-    }},
+    template: `<app></app>`,
     store: appStore,
     components: {
         App

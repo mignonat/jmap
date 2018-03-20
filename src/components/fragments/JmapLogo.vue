@@ -1,27 +1,15 @@
 <template>
-    <div :class="'jmap-logo-'+sizeCssClass" alt="JMap logo"></div>
+    <div :class="'jmap-logo-'+sizeCssClass"></div>
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    export default Vue.extend({
-        name: 'JmapLogo',
-        props: {
-            size: {
-                type: String,
-                default: 'medium'
-            }
-        },
-        computed: {
-            sizeCssClass(): string  {
-                switch (this.size) {
-                    case 'small': return 'small'
-                    case 'big': return 'big'
-                    default: return 'medium'
-                }
-            }
-        }
+    import { Component } from "vue-property-decorator"
+    import SizeableComponent from "components/mixins/SizeableComponent"
+
+    @Component({
+        name: 'JmapLogo'
     })
+    export default class JmapLogoComponent extends SizeableComponent {}
 </script>
 
 <style lang="scss">

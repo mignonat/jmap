@@ -39,6 +39,10 @@ module.exports = {
       },
       include: [ path.resolve(currentDir, 'src') ]
     },{
+      test: /\.ts$/,
+      enforce: 'pre',
+      loader: 'tslint-loader'
+    },{
       test: /\.(jpe?g|png|gif|svg|eot|woff|ttf|svg|woff2)$/,
       loader: "file-loader",
     },{

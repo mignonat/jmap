@@ -1,5 +1,7 @@
+export function getExclamationMarksByCount(count: number): string {
+    return Array(count).join('!')
+}
+
 export default {
-    getExclamationMarksByCount: (count: number): string => {
-        return Array(count).join('!')
-    }
+    getExclamationMarksByCount : getExclamationMarksByCount
 }

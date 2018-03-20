@@ -5,15 +5,16 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
+    import Vue from "vue"
     export default Vue.extend({
         name: 'MapPanel'
     })
 </script>
 
 <style lang="scss">
+    @import "src/ressources/scss/settings.scss";
     .map-panel {
-        background-color: darkgray;
+        background-color: $background-color-secondary;
         height: 100%;
     }
 </style>

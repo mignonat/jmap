@@ -7,4 +7,19 @@
     <!-- defer : scripts are async downloaded but loaded in order of insertion -->
     <script defer src="./dist/vendor.js"></script>
     <script defer src="./dist/app.js"></script>
+    <script defer lang="javascript">
+        (function() {
+            function initApp() {
+                if (window.App) {
+                    App.$store.dispatch("APP_INITIALIZE", { 
+                        viewMode: "FULL",
+                        userRights: [ "ADMIN" ]
+                    });
+                } else {
+                    setTimeout(function() { initApp(); }, 100);
+                }
+            }
+            initApp();
+        })();
+    </script>
 </html>

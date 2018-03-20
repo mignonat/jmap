@@ -1,17 +1,16 @@
 <template>
     <div class="top-bar">
-        <jmap-logo size="small"></jmap-logo>
-        <span class="top-bar-title">Here Top Bar replace static value by store getter</span>
+        <tool-bar/>
     </div>
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import JmapLogo from 'components/fragments/JmapLogo.vue'
+    import Vue from "vue"
+    import ToolBar from "components/layout/toolbar/ToolBar.vue"
     export default Vue.extend({
         name: 'TopBar',
         components: {
-            JmapLogo
+            ToolBar
         }
     })
 </script>
@@ -24,6 +23,7 @@
         width: 100%;
         display: flex;
         align-items: center;
+        background-color: $background-color-primary;
     }
     .top-bar-title {
         margin-left: 10px;

@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "outDir": "./built/",
+        "baseUrl": "./src",
         "sourceMap": true,
         "strict": true,
         "noImplicitReturns": true,
@@ -8,7 +9,13 @@
         "module": "es2015",
         "moduleResolution": "node",
         "target": "es5",
-        "downlevelIteration" : true
+        "downlevelIteration" : true,
+        "lib": [
+            "es5",
+            "es2015",
+            "dom"
+        ],
+        "strictPropertyInitialization": false
     },
     "include": [
         "./src/**/*"
