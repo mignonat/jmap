@@ -95,6 +95,22 @@ function initAndInstantiateComponent<C> (containerId: string, template: string, 
 }
 
 /**
+ * This function will be used by all component implementations
+ * Delete the Vue Component javascript object in the browser
+ * And make the container div empty
+ * 
+ * @param {IStringMap<Vue>} instanceByContainerId : The map containerId<=>Vue instance of a particular VueComponent
+ * @param {String} containerId : DOM id of the container of the component
+ */
+function destroyComponentInMap<Vue>(instanceByContainerId: IStringMap<Vue>, containerId: string): void {
+    if (instanceByContainerId.hasOwnProperty(containerId)) {
+        delete instanceByContainerId[containerId]
+        const div: HTMLElement|null = document.getElementById(containerId)
+        if (div) div.innerHTML = ""
+    }
+}
+
+/**
  * For each components we want to be available througth the Component API,
  * an implementation class of this interface has to be made
  * Ex : JMapApiComponentLayerPanel class
@@ -122,14 +138,14 @@ class JMapApiComponentLayerPanel implements IJMapApiComponentItem<ComponentLayer
         })
     }
     destroy(containerId: string): void {
-        if (this.instanceByContainerId.hasOwnProperty(containerId)) {
-            delete this.instanceByContainerId[containerId]
-            const div: HTMLElement|null = document.getElementById(containerId)
-            if (div) div.innerHTML = ""
-        }
+        destroyComponentInMap(this.instanceByContainerId, containerId)
     }
 }
 
+/**
+ * The aggregation of all IJMapApiComponentItem implementations
+ * New classes for component has to be added here
+ */
 interface IJMapApiComponent {
     LayerPanel: JMapApiComponentLayerPanel
 }

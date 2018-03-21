@@ -1,2 +1,1 @@
-integrate eslint
-in webpack config set include dirs for material-icons
+add example of api use in comments
