@@ -7,7 +7,7 @@
     import SizeableComponent from "components/mixins/SizeableComponent"
 
     @Component({
-        name: 'JmapLogo'
+        name: "JmapLogo",
     })
     export default class JmapLogoComponent extends SizeableComponent {}
 </script>

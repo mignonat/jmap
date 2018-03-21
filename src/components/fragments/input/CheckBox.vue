@@ -10,11 +10,11 @@
     import ToggableComponent from "components/mixins/ToggableComponent"
 
     @Component({
-        name: 'CheckBox'
+        name: "CheckBox",
     })
     export default class CheckBoxComponent extends ToggableComponent {
         @Prop({ type: Boolean, default: true })
-        emitEvent: boolean
+        public emitEvent: boolean
     }
 </script>
 

@@ -11,6 +11,7 @@
         (function() {
             function initApp() {
                 if (window.App) {
+                    // here the data can be set dynamically in a jsp or by passing url arguments
                     App.$store.dispatch("APP_INITIALIZE", { 
                         viewMode: "FULL",
                         userRights: [ "ADMIN" ]
@@ -19,6 +20,7 @@
                     setTimeout(function() { initApp(); }, 100);
                 }
             }
+            console.log("App init")
             initApp();
         })();
     </script>

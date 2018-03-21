@@ -11,15 +11,15 @@
     import { mapGetters } from "vuex"
     import ToolBarItem from "components/layout/toolbar/ToolBarItem.vue"
     export default Vue.extend({
-        name: 'ToolBar',
+        name: "ToolBar",
         computed: {
             ...mapGetters({
-                items: "app_action_items"
-            })
+                items: "app_action_items",
+            }),
         },
         components: {
-            ToolBarItem
-        }
+            ToolBarItem,
+        },
     })
 </script>
 

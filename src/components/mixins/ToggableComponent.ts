@@ -7,20 +7,19 @@ import { Vue, Component, Prop } from "vue-property-decorator"
  */
 export default class ToggableComponent extends Vue {
     @Prop({ type: Boolean })
-    initialState: boolean
+    public initialState: boolean
 
     @Prop({ type: Boolean, default: false })
-    emitEvent: boolean
+    public emitEvent: boolean
 
-    isOn: boolean = this.initialState===undefined? false : this.initialState
+    public isOn: boolean = this.initialState === undefined ? false : this.initialState
 
     get toggableCssClass(): string {
-        return this.isOn? 'toggle-on' : 'toggle-off'
+        return this.isOn ? "toggle-on" : "toggle-off"
     }
 
-    toggle(): boolean {
-        console.log('toggle='+this.isOn)
-        this.isOn = !this.isOn
+    public toggle(): boolean {
+        this.isOn = ! this.isOn
         if (this.emitEvent) {
             this.$emit("toggle", this.isOn)
         }

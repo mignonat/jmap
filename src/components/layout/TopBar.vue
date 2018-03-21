@@ -8,10 +8,10 @@
     import Vue from "vue"
     import ToolBar from "components/layout/toolbar/ToolBar.vue"
     export default Vue.extend({
-        name: 'TopBar',
+        name: "TopBar",
         components: {
-            ToolBar
-        }
+            ToolBar,
+        },
     })
 </script>
 

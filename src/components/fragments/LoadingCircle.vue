@@ -7,7 +7,7 @@
     import SizeableComponent from "components/mixins/SizeableComponent"
 
     @Component({
-        name: 'LoadingCirle'
+        name: "LoadingCirle",
     })
     export default class LoadingCircleComponent extends SizeableComponent {}
 </script>

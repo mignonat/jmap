@@ -25,19 +25,19 @@
     import JmapLogo from "components/fragments/JmapLogo.vue"
 
     export default Vue.extend({
-        name: 'App',
+        name: "App",
         computed: {
             ...mapGetters({
-                isAppInitialized: "app_is_initialized"
-            })
+                isAppInitialized: "app_is_initialized",
+            }),
         },
         components: {
             LayerPanel,
             TopBar,
             MapPanel,
             LoadingCircle,
-            JmapLogo
-        }
+            JmapLogo,
+        },
     })
 </script>
 

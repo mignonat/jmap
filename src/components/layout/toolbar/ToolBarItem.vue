@@ -8,18 +8,18 @@
     import Vue from "vue"
     
     export default Vue.extend({
-        name: 'ToolBar',
+        name: "ToolBar",
         props: {
             item: {
                 type: Object, // "model/app@ActionItem"
-                required: true
-            }
+                required: true,
+            },
         },
         methods: {
             clickHandler(): void {
-                console.log('Action='+this.item.action)
-            }
-        }
+                // console.log('Action='+this.item.action)
+            },
+        },
     })
 </script>
 

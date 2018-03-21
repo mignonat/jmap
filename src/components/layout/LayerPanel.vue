@@ -19,20 +19,20 @@
     import CheckBox from "components/fragments/input/CheckBox.vue"
 
     export default Vue.extend({
-        name: 'LayerPanel',
+        name: "LayerPanel",
         computed: {
             ...mapGetters({
-                layers: "app_layers"
-            })
+                layers: "app_layers",
+            }),
         },
         methods: {
             toggle(index: number): void {
-                (<CheckBox[]> this.$refs.checkboxes)[index].toggle()
-            }
+                (this.$refs.checkboxes as CheckBox[])[index].toggle()
+            },
         },
         components: {
-            CheckBox
-        }
+            CheckBox,
+        },
     })
 </script>
 
