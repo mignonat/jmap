@@ -16,24 +16,29 @@
 <script lang="ts">
     import Vue from "vue"
     import { mapGetters } from "vuex"
+    import { Component } from "vue-property-decorator"
     import CheckBox from "components/fragments/input/CheckBox.vue"
 
-    export default Vue.extend({
+    @Component({
         name: "LayerPanel",
-        computed: {
-            ...mapGetters({
-                layers: "app_layers",
-            }),
-        },
-        methods: {
-            toggle(index: number): void {
-                (this.$refs.checkboxes as CheckBox[])[index].toggle()
-            },
-        },
+        computed: mapGetters({
+            layers: "app_layers",
+        }),
         components: {
-            CheckBox,
-        },
+            CheckBox
+        }
     })
+    export default class ComponentLayerPanel extends Vue {
+        layers: string
+
+        $refs: {
+            checkboxes: CheckBox[]
+        }
+
+        toggle(index: number): void {
+            this.$refs.checkboxes[index].toggle()
+        }
+    }
 </script>
 
 <style lang="scss">

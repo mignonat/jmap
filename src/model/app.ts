@@ -1,3 +1,7 @@
+export interface IStringMap<T> {
+    [key: string]: T
+}
+
 /**
  * All jmap view mode available
  */
@@ -19,7 +23,8 @@ export enum IUserRight {
  */
 export interface IAppStartupOptions {
     viewMode: IAppViewMode
-    userRights: IUserRight[]
+    userRights: IUserRight[],
+    autoStartApp?: boolean
 }
 
 /**

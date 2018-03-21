@@ -10,11 +10,13 @@ const excludeDirs = [
 ]
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: { 
+    api: './src/api.ts'
+  },
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: 'dist/',
-    filename: 'app.js',
+    filename: '[name].js',
     chunkFilename: '[name].js'
   },
   module: {

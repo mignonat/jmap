@@ -7,6 +7,14 @@ import "material-design-icons/iconfont/material-icons.css"
 Vue.use(Vuex)
 
 /**
+ * All available actions
+ * Must use this enum when calling the store dispatch method
+ */
+export enum Actions {
+    APP_FETCH_INITIAL_DATA = "APP_FETCH_INITIAL_DATA"
+}
+
+/**
  * Define attributes structure of the root state
  */
 interface IRootState {
@@ -45,12 +53,12 @@ const rootState: IRootState = {
  */
 const methods = {
     /**
-     * Methods that trigger an Ajax call to get project's data at app startup
+     * Methods that trigger an Ajax call to get application initial data
      *
      * @param {IAppStartupOptions} options : will be passed to server
      * @return Promise<AppInitResult>
      */
-    initialize(options: IAppStartupOptions): Promise<IAppInitResult> {
+    fetchInitialData(options: IAppStartupOptions): Promise<IAppInitResult> {
         return new Promise<IAppInitResult>((resolve, reject) => {
             // simulate a long ajax call
             setTimeout(() => resolve({
@@ -100,10 +108,10 @@ interface IActionInitializeResult {
 }
 
 const actions: ActionTree<IRootState, IRootState> = {
-    APP_INITIALIZE({ commit }, options: IAppStartupOptions) {
+    APP_FETCH_INITIAL_DATA({ commit }, options: IAppStartupOptions) {
         return new Promise<string>((resolve, reject) => {
             try {
-                methods.initialize(options)
+                methods.fetchInitialData(options)
                        .then((result: IAppInitResult) => {
                             commit("APP_SET_INIT_DATA", {
                                 startupOptions: options,
@@ -114,10 +122,10 @@ const actions: ActionTree<IRootState, IRootState> = {
                        })
                        .catch(error => {
                             commit("APP_SET_STARTUP_ERROR")
-                            reject("Action APP_INITIALIZE error : " + error)
+                            reject("Action APP_FETCH_INITIAL_DATA error : " + error)
                        })
             } catch (exception) {
-                reject("Action APP_INITIALIZE exception : " + exception)
+                reject("Action APP_FETCH_INITIAL_DATA exception : " + exception)
             }
         })
     },

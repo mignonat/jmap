@@ -4,24 +4,18 @@
     <body>
         <div id="app"></div>
     </body>
+    
+    <script lang="javascript">
+        // Here the application parameters
+        // They can inserted dynamically in a JSP
+        // Or as GET params in the URL
+        window.JMapAppStartupOptions = { 
+            viewMode: "FULL",
+            userRights: [ "ADMIN" ],
+            autoStartApp: true
+        }
+    </script>
     <!-- defer : scripts are async downloaded but loaded in order of insertion -->
     <script defer src="./dist/vendor.js"></script>
-    <script defer src="./dist/app.js"></script>
-    <script defer lang="javascript">
-        (function() {
-            function initApp() {
-                if (window.App) {
-                    // here the data can be set dynamically in a jsp or by passing url arguments
-                    App.$store.dispatch("APP_INITIALIZE", { 
-                        viewMode: "FULL",
-                        userRights: [ "ADMIN" ]
-                    });
-                } else {
-                    setTimeout(function() { initApp(); }, 100);
-                }
-            }
-            console.log("App init")
-            initApp();
-        })();
-    </script>
+    <script defer src="./dist/api.js"></script>
 </html>
