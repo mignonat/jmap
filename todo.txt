@@ -1,1 +1,15 @@
-add example of api use in comments
+Add a use of slot example
+Ex : use a RetractablePanel with LayerListPanel and an other with LayerEditPanel
+
+Demo :
+ - Explain about Webpack
+ - List advantages of typescript
+   -- Static Typing => no error, gain of time, turn the light on
+   -- Class/Interface => reuse
+   -- Generic types => factorization
+   -- Auto-completion => gain of time
+   -- Object Oriented Language
+   -- Transpiler : beautifull code
+   
+ - Talk about Vuetify
+ - API shift, the old using the new one

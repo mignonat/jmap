@@ -1,7 +1,7 @@
 # jmap
 This project is an exemple of some technologies we may use at K2 Geospatial
 
-The technology stack is : 
+The technology stack is :
  - npm              : Dependencies manager
  - webpack          : Module bundler
  - gulp             : Task manager (for building code)
@@ -23,7 +23,7 @@ Then you can open the file "index.html" in the project root folder.
 
 By default the Application is not launched, so the page is blank
 
-To Launch the application : 
+To Launch the application :
  - #JMapAPI.Application.start()
 To create instance of PanelLayer in the container with id = "my-panel" : 
  - #JMapAPI.Component.LayerListPanel.instanciate("layer")
