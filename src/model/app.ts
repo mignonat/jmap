@@ -49,4 +49,5 @@ export interface IActionItem {
 export interface IMapLayer {
     name: string
     description?: string
+    isSelected: boolean
 }

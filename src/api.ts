@@ -3,142 +3,131 @@
  * Has to be imported only once
  */
 import "babel-polyfill"
+import "api-polyfill"
 import Vue, { VueConstructor } from "vue"
 import { Store } from "vuex"
 import { IStringMap, IAppStartupOptions, IAppViewMode, IUserRight } from "model/app"
 import AppStore, { Actions as AppStoreActions } from "store/store"
 import ComponentApp from "components/App.vue"
-import ComponentLayerPanel from "components/layout/LayerPanel.vue"
+import ComponentLayerListPanel from "components/layout/layer/LayerListPanel.vue"
+import ComponentJMapLogo from "components/fragments/JmapLogo.vue"
 
-const dataStoreHasBeenInitialiazed: boolean = false
+const isStoreInitialiazed: boolean = false
 const windowVar: any = (window as any)
 
 // Application options are passed as a global variable named JMapAppStartupOptions
-const JMapAppStartupOptions: IAppStartupOptions = windowVar.JMapAppStartupOptions
-let defaultStartupOptions: IAppStartupOptions = JMapAppStartupOptions ?
+const JMapAppStartupOptions: IAppStartupOptions|undefined = windowVar.JMapAppStartupOptions
+const defaultStartupOptions: IAppStartupOptions = JMapAppStartupOptions ?
     JMapAppStartupOptions :
     {   // default startup options
         viewMode: IAppViewMode.PREVIEW,
         userRights: [ IUserRight.VIEW ],
     }
 
-/**
- * Check if the data store (vuex store) has already been initialized
- * If not, it'll be initialized
- */
-function checkDataStore(): Promise<any> {
-    if (! AppStore.getters.app_is_initialized) {
-        return AppStore.dispatch(AppStoreActions.APP_FETCH_INITIAL_DATA)
-    } else {
-        return new Promise<any>((resolve, reject) => {
-            resolve()
-        })
+/************* API DATA *************/
+
+interface IJMapApiData {
+    Store: Store<any>|undefined
+    StartupOptions: IAppStartupOptions
+    checkStore(startupOptions?: IAppStartupOptions): void
+}
+
+class JMapApiData implements IJMapApiData {
+    public Store: Store<any>|undefined = AppStore
+    public StartupOptions: IAppStartupOptions = defaultStartupOptions
+    /**
+     * Check if the data store (vuex store) has already been initialized
+     * If not, it'll be initialized
+     * @param {IAppStartupOptions} startupOptions : see interface
+     */
+    public checkStore(startupOptions?: IAppStartupOptions): void {
+        if (!AppStore.getters.app_is_initialized && !AppStore.getters.app_is_loading) {
+            if (startupOptions) this.StartupOptions = startupOptions
+            AppStore.dispatch(AppStoreActions.APP_FETCH_INITIAL_DATA, this.StartupOptions)
+                    .catch(error => {
+                        console.error("JMapAPI : checkStore/APP_FETCH_INITIAL_DATA ; " + error)
+                    })
+        } else {
+            console.warn("JMapAPI : data are " + (AppStore.getters.app_is_loading ? "loading" : "loaded"))
+        }
     }
 }
 
-/************* API APP *************/
-
-interface IJMapApiApplication {
-    ContainerId: string
-    Instance: Vue|undefined
-    DataStore: Store<any>|undefined
-    StartupOptions: IAppStartupOptions
-}
+const apiData: IJMapApiData = new JMapApiData()
 
 /************* API COMPONENT *************/
 
-/**
- * Instantiate a component with the given parameters
- * 
- * @param {String} containerId : DOM id of the container of the component
- * @param {String} template : the vuejs template for instanciation ex: "layer-panel"
- * @param {Object} componentConfig : the vuejs component configuration (the one in the .vue file)
- */
-function instantiateComponent<C> (containerId: string, template: string, componentConfig: C): Vue {
-    return new Vue({
-        el: "#" + containerId,
-        template: `<${template} id="${containerId}"/>`,
-        store: AppStore,
-        components: {
-            [template]: componentConfig
-        }
-    })
-}
-
-/**
- * Check if the datastore has been initialized, if not it is intialized
- * Then create an instance of the component in the html element with id containerId
- * 
- * @param {String} containerId : DOM id of the container of the component
- * @param {String} template : the vuejs template for instanciation
- * @param {Object} componentConfig : the vuejs component configuration (the one in the .vue file)
- */
-function initAndInstantiateComponent<C> (containerId: string, template: string, componentConfig: C): Promise<Vue|undefined> {
-    return new Promise<Vue>((resolve, reject) => {
-        if (!containerId) {     reject("Missing container identifier"); return }
-        if (!template) {        reject("Missing template"); return }
-        if (!componentConfig) { reject("Missing vuejs component configuration"); return }
-        
-        if (AppStore.getters.app_is_initialized) {
-            instantiateComponent(containerId, template, componentConfig)
-        } else {
-            AppStore.dispatch(AppStoreActions.APP_FETCH_INITIAL_DATA)
-            .then(() => {
-                resolve(instantiateComponent(containerId, template, componentConfig))
-            })
-            .catch(error => {
-                console.error(error)
-                reject(error)
-            })
-        }
-    })
-}
-
-/**
- * This function will be used by all component implementations
- * Delete the Vue Component javascript object in the browser
- * And make the container div empty
- * 
- * @param {IStringMap<Vue>} instanceByContainerId : The map containerId<=>Vue instance of a particular VueComponent
- * @param {String} containerId : DOM id of the container of the component
- */
-function destroyComponentInMap<Vue>(instanceByContainerId: IStringMap<Vue>, containerId: string): void {
-    if (instanceByContainerId.hasOwnProperty(containerId)) {
-        delete instanceByContainerId[containerId]
-        const div: HTMLElement|null = document.getElementById(containerId)
-        if (div) div.innerHTML = ""
-    }
-}
-
-/**
- * For each components we want to be available througth the Component API,
- * an implementation class of this interface has to be made
- * Ex : JMapApiComponentLayerPanel class
- */
-interface IJMapApiComponentItem<C extends Vue> {
-    instanceByContainerId: IStringMap<Vue>
-    instanciate(containerId: string, options: any): void
+interface IJMapApiComponentItem<C extends VueConstructor<Vue>> {
+    instanciate(containerId: string, options: any): Vue|undefined
     destroy(containerId: string): void
+    getInstance(containerId: string): Vue|undefined
 }
 
 /**
- * The class which manage instanciation/deletion of LayerPanel components
+ * An instance for each components we want to export in the API
+ * will be created. Ex of creation :
+ *   -> new JMapApiComponentItem(ComponentLayerListPanel, "layer-list-panel")
  */
-class JMapApiComponentLayerPanel implements IJMapApiComponentItem<ComponentLayerPanel> {
-    instanceByContainerId: IStringMap<Vue> = {}
-    instanciate(containerId: string, options: any): void {
-        if (this.instanceByContainerId.hasOwnProperty(containerId)) {
-            console.warn("JMapAPI : instance already instantiate in this container")
-            return
-        }
-        initAndInstantiateComponent(containerId, "layer-panel", ComponentLayerPanel)
-        .then(instance => {
-            // register new instance for possible future destroy
-            if (instance) this.instanceByContainerId[containerId] = instance
-        })
+class JMapApiComponentItem<C extends VueConstructor<Vue>> implements IJMapApiComponentItem<C> {
+    private template: string
+    private configuration: C
+    private instanceByContainerId: IStringMap<Vue> = {}
+    /**
+     * @constructor
+     * @param {VueConstructor<Vue>} configuration : component configuration exported by the .vue file
+     * @param {String} template : the vuejs template for instanciation. Ex "layer-panel"
+     */
+    constructor(configuration: C, template: string) {
+        this.template = template
+        this.configuration = configuration
     }
-    destroy(containerId: string): void {
-        destroyComponentInMap(this.instanceByContainerId, containerId)
+    /**
+     * Check if the data store has been initialized, if not it is
+     * Then create an instance of the component in the html element with id containerId
+     * Finally store the new instance in the instanceByContainerId map
+     */
+    public instanciate(containerId: string, options: any): Vue|undefined {
+        if (! containerId) {
+            console.error("JMapAPI : Missing container identifier"); return
+        }
+        if (this.instanceByContainerId.hasOwnProperty(containerId)) {
+            console.warn("JMapAPI : instance already instantiate in this container"); return
+        }
+        apiData.checkStore()
+        const instance: Vue|undefined = new Vue({
+            el: "#" + containerId,
+            template: `<${this.template} id="${containerId}"/>`,
+            store: AppStore,
+            components: {
+                [this.template]: this.configuration,
+            },
+        })
+        if (instance) this.instanceByContainerId[containerId] = instance
+        return instance
+    }
+    /**
+     * This function will be used to delete the Vue Component javascript object in the browser
+     * And make the container div empty
+     * 
+     * @param {IStringMap<Vue>} instanceByContainerId : The map containerId<=>Vue instance of a particular VueComponent
+     * @param {String} containerId : DOM id of the container of the component
+     */
+    public destroy(containerId: string): void {
+        if (this.instanceByContainerId.hasOwnProperty(containerId)) {
+            try {
+                delete this.instanceByContainerId[containerId]
+                const div: HTMLElement|null = document.getElementById(containerId)
+                if (div) div.innerHTML = ""
+            } catch (error) {
+                console.error("JMapAPI : JMapApiComponentItem destroy ; " + error)
+            }
+        }
+    }
+    public getInstance(containerId: string): Vue|undefined {
+        if (! containerId) {
+            console.error("JMapAPI : Missing container identifier"); return
+        }
+        return this.instanceByContainerId[containerId]
     }
 }
 
@@ -147,8 +136,52 @@ class JMapApiComponentLayerPanel implements IJMapApiComponentItem<ComponentLayer
  * New classes for component has to be added here
  */
 interface IJMapApiComponent {
-    LayerPanel: JMapApiComponentLayerPanel
+    LayerListPanel: IJMapApiComponentItem<VueConstructor<Vue>>,
+    JMapLogo: IJMapApiComponentItem<VueConstructor<Vue>>,
 }
+
+const apiComponent: IJMapApiComponent = {
+    LayerListPanel: new JMapApiComponentItem(ComponentLayerListPanel, "layer-list-panel"),
+    JMapLogo: new JMapApiComponentItem(ComponentJMapLogo, "jmap-logo"),
+}
+
+/************* API APPLICATION *************/
+
+interface IJMapApiApplication {
+    ContainerId: string
+    Instance: Vue|undefined
+    start(containerId?: string, startupOptions?: IAppStartupOptions): void
+}
+
+class JMapApiApplication implements IJMapApiApplication {
+    public ContainerId: string = "app"
+    public Instance: Vue|undefined = undefined
+    /**
+     * Start the JMAP Application (maybe on prod soon)
+     * 
+     * @param {String} containerId : the dom div id
+     * @param {IAppStartupOptions} startupOptions : 
+     */
+    public start(containerId?: string, startupOptions?: IAppStartupOptions): void {
+        if (this.Instance) {
+            console.warn("JMapAPI : application has already been initialized")
+            return
+        }
+        if (!containerId) containerId = "app"
+        this.ContainerId = containerId
+        apiData.checkStore(startupOptions)
+        this.Instance = new Vue({
+            el: "#" + this.ContainerId, // Where Vue App will be inserted in the DOM
+            template: "<app></app>",    // <app> lowerCamelCase string of name in components
+            store: AppStore,            // All App children will have the store injected
+            components: {
+                app: ComponentApp,      // It's an SPA so only the app component here
+            },
+        })
+    }
+}
+
+const apiApplication: IJMapApiApplication = new JMapApiApplication()
 
 /************* API *************/
 
@@ -156,7 +189,8 @@ interface IJMapApiComponent {
  * Definition of the root elements of the API
  */
 interface IJMapApi {
-    Application: IJMapApiApplication
+    Data: IJMapApiData
+    Application: JMapApiApplication
     Component: IJMapApiComponent
 }
 
@@ -164,63 +198,24 @@ interface IJMapApi {
  * That class is what will be exported in JMapAPI global variable
  */
 class JMapApi implements IJMapApi {
-    public Application: IJMapApiApplication = {
-        ContainerId: "app",
-        Instance: undefined,
-        DataStore: undefined,
-        StartupOptions: defaultStartupOptions,
-    }
-    public Component: IJMapApiComponent = {
-        LayerPanel: new JMapApiComponentLayerPanel()
-    }
-    /**
-     * Start the JMAP Application (maybe on prod soon)
-     * 
-     * @param {String} containerId : the dom div id
-     * @param {IAppStartupOptions} startupOptions : 
-     */
-    public startApplication(containerId?: string, startupOptions?: IAppStartupOptions): void {
-        if (this.Application.Instance) {
-            console.warn("JMapAPI : application has already been initialized")
-            return
-        }
-        if (containerId) this.Application.ContainerId = "app"
-        if (!startupOptions) startupOptions = this.Application.StartupOptions
-        this.Application.DataStore = AppStore
-        checkDataStore()
-        .then(() => {
-            const VueAppConfig = {
-                el: "#" + this.Application.ContainerId, // Where Vue App will be inserted in the DOM
-                template: "<app></app>",        // <app> lowerCamelCase string of name in components
-                store: AppStore,                // All App children will have the store injected
-                components: {
-                    app: ComponentApp,          // It's an SPA so only the app component here
-                },
-            }
-            this.Application.Instance = new Vue(VueAppConfig)
-        })
-        .catch(error => {
-            console.error("JMapAPI : startApplication error ; " + error)
-        })
-    }
+    public Data: IJMapApiData = apiData
+    public Component: IJMapApiComponent = apiComponent
+    public Application: JMapApiApplication = apiApplication
 }
 
-/************* API INSTANTIATION *************/
-
-let JMapAPI: JMapApi
+let apiJMap: JMapApi
 if (windowVar.hasOwnProperty("JMapAPI")) {  // API has already been initialized
-    JMapAPI = windowVar.JMapAPI
+    apiJMap = windowVar.JMapAPI
 } else {
-    JMapAPI = new JMapApi()
-    if (windowVar.hasOwnProperty("JMapAppStartupOptions")) {
-        // options can be passed as a global variable named JMapAppStartupOptions
-        const autoStart: boolean|undefined = (windowVar.JMapAppStartupOptions as IAppStartupOptions).autoStartApp
-        if (autoStart) JMapAPI.startApplication()
+    apiJMap = new JMapApi()
+    if (JMapAppStartupOptions) {
+        const autoStart: boolean|undefined = JMapAppStartupOptions.autoStartApp
+        if (autoStart) apiJMap.Application.start()
     }
 }
 
 /************* API EXPORT *************/
 
-windowVar.JMapAPI = JMapAPI // Will be visible by everybody
+windowVar.JMapAPI = apiJMap // Will be visible by everybody
 
-export default JMapAPI      // we must export something
+export default apiJMap      // we have to export something

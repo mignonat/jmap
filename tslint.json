@@ -31,7 +31,8 @@
             }
         ],
         "curly": [ true, "ignore-same-line" ],
-        "no-console": [ true, "log" ]
+        "no-console": [ true, "log" ],
+        "max-classes-per-file": [ true, 5, "exclude-class-expressions" ]
     },
     "rulesDirectory": []
 }

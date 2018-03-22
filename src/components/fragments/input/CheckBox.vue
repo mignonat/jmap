@@ -1,20 +1,46 @@
 <template>
     <div :class="'check-box '+toggableCssClass">
-        <i class="material-icons" v-on:click="toggle" v-if="isOn">check</i>
-        <i class="material-icons" v-on:click="toggle" v-else>check_box_outline_blank</i>
+        <i class="material-icons" v-on:click="click" v-if="isOn">check</i>
+        <i class="material-icons" v-on:click="click" v-else>check_box_outline_blank</i>
     </div>
 </template>
 
 <script <script lang="ts">
-    import { Component, Prop } from "vue-property-decorator"
+    import { Component, Prop, Watch } from "vue-property-decorator"
     import ToggableComponent from "components/mixins/ToggableComponent"
 
     @Component({
         name: "CheckBox",
     })
     export default class CheckBoxComponent extends ToggableComponent {
+        @Prop({ type: Boolean })
+        public externalState?: boolean
+
         @Prop({ type: Boolean, default: true })
         public emitEvent: boolean
+
+        public click() {
+            if (this.externalState !== undefined) {
+                this.$emit("change")
+            } else {
+                this.toggle()
+            }
+        }
+
+        public mounted(): void {
+            if (this.externalState !== undefined) {
+                this.isOn = this.externalState
+            }
+        }
+
+        @Watch("externalState")
+        private onExternalStateChanged(val: string, oldVal: string) {
+            if (val) {
+                if (! this.isOn) this.toggleSilent()
+            } else {
+                if (this.isOn) this.toggleSilent()
+            }
+        }
     }
 </script>
 

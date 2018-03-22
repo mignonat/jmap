@@ -1,21 +1,34 @@
 <!doctype html>
 <html>
-    <head></head>
+    <head>
+        <style>
+            .components {
+                display: flex;
+                align-items: center;
+            }
+        </style>
+    </head>
     <body>
+        <button onclick="JMapAPI.Application.start()">Start app</button>
+        <button onclick="JMapAPI.Component.LayerListPanel.instanciate('layer')">Create Layer List Component</button>
+        <button onclick="JMapAPI.Component.JMapLogo.instanciate('logo')">Create JMap Logo component</button>
+        <div class="components">
+            <div id="layer"></div>
+            <div id="logo"></div>
+        </div>
         <div id="app"></div>
+        <script lang="javascript">
+            // Here the application parameters
+            // They can inserted dynamically in a JSP
+            // Or as GET params in the URL
+            window.JMapAppStartupOptions = {
+                viewMode: "FULL",
+                userRights: [ "ADMIN" ],
+                autoStartApp: false
+            }
+        </script>
+        <!-- defer : scripts are async downloaded but loaded in order of insertion -->
+        <script defer src="./dist/vendor.js"></script>
+        <script defer src="./dist/api.js"></script>
     </body>
-    
-    <script lang="javascript">
-        // Here the application parameters
-        // They can inserted dynamically in a JSP
-        // Or as GET params in the URL
-        window.JMapAppStartupOptions = { 
-            viewMode: "FULL",
-            userRights: [ "ADMIN" ],
-            autoStartApp: false
-        }
-    </script>
-    <!-- defer : scripts are async downloaded but loaded in order of insertion -->
-    <script defer src="./dist/vendor.js"></script>
-    <script defer src="./dist/api.js"></script>
 </html>

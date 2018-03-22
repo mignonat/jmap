@@ -18,7 +18,7 @@
 <script lang="ts">
     import Vue from "vue"
     import { mapGetters } from "vuex"
-    import LayerPanel from "components/layout/LayerPanel.vue"
+    import LayerPanel from "components/layout/layer/LayerPanel.vue"
     import MapPanel from "components/layout/MapPanel.vue"
     import TopBar from "components/layout/TopBar.vue"
     import LoadingCircle from "components/fragments/LoadingCircle.vue"
@@ -43,10 +43,6 @@
 
 <style lang="scss">
     @import "src/ressources/scss/settings.scss"; // is an import, can use absolute import
-    .app * {
-        margin: 0px;
-        padding: Opx;
-    }
     .app * {
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -101,7 +97,8 @@
         padding-left: 5px;
         background-color: $background-color-primary;
     }
-    .left-side .layer-panel {
+    .left-side .layer-panel,
+    .left-side .layer-edit-panel {
         width: 100%;
     }
     .right-side {
