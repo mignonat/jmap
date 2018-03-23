@@ -18,13 +18,13 @@ The technology stack is :
  - Move to the directory where you want to install this project
  - #git clone https://github.com/mignonat/jmap (will create a jmap folder and copy source inside)
  - npm install (will download all project dependencies, can be long > 1 minute)
+ - npm run build // build the application
 
 Then you can open the file "index.html" in the project root folder.
 
-By default the Application is not launched, so the page is blank
-
-To Launch the application :
- - #JMapAPI.Application.start()
-To create instance of PanelLayer in the container with id = "my-panel" : 
- - #JMapAPI.Component.LayerListPanel.instanciate("layer")
- - #JMapAPI.Component.JMapLogo.instanciate("logo")
+In browser console, you can :
+   - Launch the application  :
+    #JMapAPI.Application.start()
+   - Create instances of component, ex a LayerListPanel in the container with DOM id = "layer" : 
+    #JMapAPI.Component.LayerListPanel.instanciate("layer")
+    #JMapAPI.Component.JMapLogo.instanciate("logo")

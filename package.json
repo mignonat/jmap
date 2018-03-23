@@ -4,10 +4,7 @@
   "description": "The jmap web interface",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode development",
-    "build-analyser": "export PROCESS_ANALYSER=true ; webpack --mode development",
-    "build-prod": "export NODE_ENV=\"production\"; webpack  --mode production",
-    "build-prod-analyser": "export NODE_ENV=\"production\"; export PROCESS_ANALYSER=true; webpack  --mode production",
+    "build": "gulp build",
     "cip": "gulp build",
     "cid": "gulp build-dev",
     "ciap": "gulp build-analyse",

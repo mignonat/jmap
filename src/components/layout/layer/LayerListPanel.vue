@@ -3,12 +3,17 @@
         <span class="layer-list-panel-title">List of layers</span>
         <div class="layer-list-panel-item"
              v-for="layer in layers"
-             v-bind:key="layer.name">
+             v-bind:key="layer.name"
+             v-show="isAppInitialized">
             <check-box ref="checkboxes" :externalState="layer.isSelected" @change="toggle(layer.name)"/>
             <span class="layer-list-panel-item-name" @click="toggle(layer.name)">{{ layer.name }}</span>
             <span class="layer-list-panel-item-description" v-if="layer.description">
                 {{ layer.description }}
             </span>
+        </div>
+        <div class="layer-list-panel-empty" v-show="isAppLoading">
+            <span class="layer-list-panel-item-empty">Data loading</span>
+            <loading-circle size="small"/>
         </div>
     </div>
 </template>
@@ -19,14 +24,18 @@
     import { Component } from "vue-property-decorator"
     import { IMapLayer } from "model/app"
     import CheckBox from "components/fragments/input/CheckBox.vue"
+    import LoadingCircle from "components/fragments/LoadingCircle.vue"
 
     @Component({
         name: "LayerListPanel",
         computed: mapGetters({
             layers: "app_layers",
+            isAppInitialized: "app_is_initialized",
+            isAppLoading: "app_is_loading",
         }),
         components: {
             CheckBox,
+            LoadingCircle,
         },
     })
     export default class ComponentLayerPanel extends Vue {
@@ -67,5 +76,10 @@
     .layer-list-panel-item-description {
         margin-left: 5px;
         font-size: 12px;
+    }
+    .layer-list-panel-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 </style>
