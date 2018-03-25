@@ -6,7 +6,8 @@ import "babel-polyfill"
 import "api-polyfill"
 import Vue, { VueConstructor } from "vue"
 import { Store } from "vuex"
-import { IStringMap, IAppStartupOptions, IAppViewMode, IUserRight } from "model/app"
+import { IMap, Map } from "model/common"
+import { IAppStartupOptions, IAppViewMode, IUserRight } from "model/app"
 import AppStore, { Actions as AppStoreActions } from "store/store"
 import ComponentApp from "components/App.vue"
 import ComponentLayerListPanel from "components/layout/layer/LayerListPanel.vue"
@@ -58,7 +59,7 @@ const apiData: IJMapApiData = new JMapApiData()
 /************* API COMPONENT *************/
 
 interface IJMapApiComponentItem<C extends VueConstructor<Vue>> {
-    instanciate(containerId: string, options: any): Vue|undefined
+    create(containerId: string, options: any): Vue|undefined
     destroy(containerId: string): void
     getInstance(containerId: string): Vue|undefined
 }
@@ -71,11 +72,11 @@ interface IJMapApiComponentItem<C extends VueConstructor<Vue>> {
 class JMapApiComponentItem<C extends VueConstructor<Vue>> implements IJMapApiComponentItem<C> {
     private template: string
     private configuration: C
-    private instanceByContainerId: IStringMap<Vue> = {}
+    private instanceByContainerId: IMap<Vue> = new Map<Vue>()
     /**
      * @constructor
      * @param {VueConstructor<Vue>} configuration : component configuration exported by the .vue file
-     * @param {String} template : the vuejs template for instanciation. Ex "layer-panel"
+     * @param {String} template : the vuejs template for instantiation. Ex "layer-panel"
      */
     constructor(configuration: C, template: string) {
         this.template = template
@@ -86,11 +87,11 @@ class JMapApiComponentItem<C extends VueConstructor<Vue>> implements IJMapApiCom
      * Then create an instance of the component in the html element with id containerId
      * Finally store the new instance in the instanceByContainerId map
      */
-    public instanciate(containerId: string, options: any): Vue|undefined {
+    public create(containerId: string, options: any): Vue|undefined {
         if (! containerId) {
             console.error("JMapAPI : Missing container identifier"); return
         }
-        if (this.instanceByContainerId.hasOwnProperty(containerId)) {
+        if (this.instanceByContainerId.contains(containerId)) {
             console.warn("JMapAPI : instance already instantiate in this container"); return
         }
         apiData.checkStore()
@@ -102,7 +103,7 @@ class JMapApiComponentItem<C extends VueConstructor<Vue>> implements IJMapApiCom
                 [this.template]: this.configuration,
             },
         })
-        if (instance) this.instanceByContainerId[containerId] = instance
+        if (instance) this.instanceByContainerId.put(containerId, instance)
         return instance
     }
     /**
@@ -113,9 +114,11 @@ class JMapApiComponentItem<C extends VueConstructor<Vue>> implements IJMapApiCom
      * @param {String} containerId : DOM id of the container of the component
      */
     public destroy(containerId: string): void {
-        if (this.instanceByContainerId.hasOwnProperty(containerId)) {
+        if (this.instanceByContainerId.contains(containerId)) {
+            const instance: Vue = this.instanceByContainerId.get(containerId)
+            this.instanceByContainerId.remove(containerId)
+            if (instance) instance.$destroy()
             try {
-                delete this.instanceByContainerId[containerId]
                 const div: HTMLElement|null = document.getElementById(containerId)
                 if (div) div.innerHTML = ""
             } catch (error) {
@@ -127,7 +130,7 @@ class JMapApiComponentItem<C extends VueConstructor<Vue>> implements IJMapApiCom
         if (! containerId) {
             console.error("JMapAPI : Missing container identifier"); return
         }
-        return this.instanceByContainerId[containerId]
+        return this.instanceByContainerId.get(containerId)
     }
 }
 

@@ -1,7 +1,7 @@
 <template>
     <div class="layer-edit-panel">
         <span class="layer-edit-panel-title">Layer edition</span>
-        <select v-model="selectedLayerName">
+        <select v-model="selectedLayerName" class="layer-edit-panel-select">
             <option v-for="layer in layers"
                     v-bind:key="layer.name"
                     :value="layer.name">
@@ -78,6 +78,10 @@
     .layer-edit-panel-title {
         font-size: 18px;
         font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .layer-edit-panel-select {
+        width: fit-content;
         margin-bottom: 10px;
     }
     .layer-edit-panel-item {

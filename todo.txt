@@ -1,2 +1,3 @@
 API initialisation : POPUP, create an hidden div and provide a class to manipulate
 Add a use of slot example, like using a RetractablePanel with LayerListPanel and an other with LayerEditPanel
+Use export as namespace for API

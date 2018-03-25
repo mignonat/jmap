@@ -1,7 +1,3 @@
-export interface IStringMap<T> {
-    [key: string]: T
-}
-
 /**
  * All jmap view mode available
  */

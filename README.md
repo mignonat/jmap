@@ -26,5 +26,5 @@ In browser console, you can :
    - Launch the application  :
     **#JMapAPI.Application.start()**
    - Create instances of component, ex a LayerListPanel in the container with DOM id = "layer" : 
-    **#JMapAPI.Component.LayerListPanel.instanciate("layer")**
-    **#JMapAPI.Component.JMapLogo.instanciate("logo")**
+    **#JMapAPI.Component.LayerListPanel.create("layer")**
+    **#JMapAPI.Component.JMapLogo.create("logo")**
