@@ -1,17 +1,18 @@
 /**
  * The map interface
  */
-export interface IMap<V> {
-    get(key: string): V
-    put(key: string, object: V): V|undefined
-    remove(key: string): V|undefined
-    contains(key: string): boolean
+export interface IMap<K, V> {
+    get(key: K): V
+    put(key: K, object: V): V|undefined
+    remove(key: K): V|undefined
+    contains(key: K): boolean
 }
 
 /**
- * A simple map implementation
+ * A simple map implementation 
+ * where keys are always string
  */
-export class Map<V> implements IMap<V> {
+export class Map<V> implements IMap<string, V> {
     private valuesByKey: { [key: string]: V } = {}
     public get(key: string): V {
         return this.valuesByKey[key]
