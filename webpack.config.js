@@ -2,6 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const TypedocWebpackPlugin = require('typedoc-webpack-plugin')
 
 const currentDir = path.resolve('.')
 const excludeDirs = [
@@ -120,6 +121,18 @@ if (process.env.NODE_ENV === 'production') {
       })
     ]
   })
+  module.exports.plugins = (module.exports.plugins || []).concat([
+    new TypedocWebpackPlugin({
+      out: '../doc',
+      name: 'JMapWeb',
+      mode: 'modules',
+      exclude: '**/node_modules/**/*.*',
+      experimentalDecorators: true,
+      excludeExternals: true,
+      includeDeclarations: false,
+      ignoreCompilerErrors: true,
+    })
+  ])
 } else {
   // development environment
   console.log('Webpack will run in development mode')

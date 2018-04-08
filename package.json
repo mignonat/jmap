@@ -10,7 +10,8 @@
     "ciap": "gulp build-analyse",
     "ciad": "gulp build-analyse-dev",
     "tslint": "tslint -c tslint.json 'src/**/*.ts'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "doc": "typedoc --out ./doc/ ./src/api.ts"
   },
   "author": "Laurent Mignonat",
   "license": "K2",
@@ -43,6 +44,8 @@
     "ts-loader": "^4.0.1",
     "tslint": "^5.9.1",
     "tslint-loader": "^3.6.0",
+    "typedoc": "^0.5.10",
+    "typedoc-webpack-plugin": "^1.1.4",
     "typescript": "^2.7.2",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "vue-loader": "^14.2.1",

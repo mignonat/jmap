@@ -72,7 +72,7 @@ interface IJMapApiComponentItem<C extends VueConstructor<Vue>> {
 class JMapApiComponentItem<C extends VueConstructor<Vue>> implements IJMapApiComponentItem<C> {
     private template: string
     private configuration: C
-    private instanceByContainerId: IMap<Vue> = new Map<Vue>()
+    private instanceByContainerId: IMap<string, Vue> = new Map<Vue>()
     /**
      * @constructor
      * @param {VueConstructor<Vue>} configuration : component configuration exported by the .vue file
